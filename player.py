@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Collection, Literal
 
-from .game_objects import Hand, Board, GameStatus, Action, ActionType
+from game_objects import HoleCards, Board, GameStatus, Action, ActionType
 
 class Player(ABC):
     '''A player in the game.'''
@@ -11,13 +11,16 @@ class Player(ABC):
     @abstractmethod
     def get_action(
         self,
-        hand: Hand,
+        HoleCards: HoleCards,
         board: Board,
         status: GameStatus,
         *,
-        op_hand: Hand | None = None
+        op_HoleCards: HoleCards | None = None
     ) -> Action:
         '''Return the player's move given the current board.'''
+        
+    def __str__(self):
+        return self.name
         
 class ConsolePlayer(Player):
     '''A player that plays through the terminal.'''
@@ -62,16 +65,17 @@ class ConsolePlayer(Player):
         
     def get_action(
         self,
-        hand: Hand,
+        HoleCards: HoleCards,
         board: Board,
         status: GameStatus,
         *,
-        op_hand: Hand | None = None
+        op_holecards: HoleCards | None = None
     ) -> Action:
         
         print(f'{self.name}\'s turn')
-        print(f'Your hand: {hand}')
+        print(f'Your hole cards: {HoleCards}')
         print(f'The board: {board}')
+        if op_holecards: print(f'The opponent\'s hole cards: {op_holecards}')
         print(f'The status: {status}')
         
         valid_actions = status.get_valid_actions()

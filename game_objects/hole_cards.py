@@ -12,7 +12,7 @@ class HoleCards(frozenset):
         super().__new__(frozenset, cards)
 
     def __str__(self) -> str:
-        return 'Hole cards: ' + ' & '.join(map(str, self))
+        return ' '.join(map(str, self))
 
     def __repr__(self) -> str:
         return f'HoleCards({str(list(self))})'

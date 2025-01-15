@@ -2,6 +2,13 @@ from typing import Self
 
 from .color import Color
 
+number_to_str = {
+    1: 'A',
+    11: 'J',
+    12: 'Q',
+    13: 'K'
+}
+
 class Card:
     '''A card in a deck of cards.'''
     def __init__(self, number: int, color: Color):
@@ -16,7 +23,7 @@ class Card:
         return hash((self.number, self.color))
     
     def __str__(self):
-        return f'{self.number} of {self.color.name.lower()}'
+        return f'{number_to_str.get(self.number, self.number)}{self.color}'
     
     def __repr__(self):
-        return f'Card({self.number}, Color.{self.color.name})'
+        return f'Card({self.number}, {repr(self.color)})'

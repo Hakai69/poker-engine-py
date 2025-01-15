@@ -22,14 +22,23 @@ class GamePhase(Enum):
         if self == GamePhase.SHOWDOWN:
             return GamePhase.FINISHED
         raise ValueError('Game is already finished.')
+    
+    def __str__(self) -> str:
+        return self.name.replace('_', ' ').title()
 
 class GameStatus:
-    def __init__(self, players_money):
-        self.players_money = players_money
+    '''
+    Information about the current game state the players should be able
+    to know.
+    '''
+    def __init__(self, player1_money: int, player2_money: int, blind: int):
+        self.players_money = [player1_money, player2_money]
         self.game_phase = GamePhase.PRE_FLOP
         self.bets = [0, 0]
-        self.current_player = 0
+        self.initial_player = 0
+        self.current_player = 1
         self.last_aggresive_player = 0
+        self.blind = blind
         
     def get_valid_actions(self):
         player = self.current_player
@@ -47,3 +56,11 @@ class GameStatus:
             valid_actions.append(ActionType.RAISE)
             
         return valid_actions
+    
+    def __str__(self):
+        return (
+            f'GamePhase: {self.game_phase}, '
+            f'Current player: {self.current_player}, '
+            f'Bets: {self.bets}, '
+            f'Players money: {self.players_money}'
+        )

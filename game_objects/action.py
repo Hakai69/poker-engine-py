@@ -15,7 +15,7 @@ class ActionType(Flag):
     
 class Action:
 
-    def __init__(self, type: ActionType, value: int | None):
+    def __init__(self, type: ActionType, value: int | None = None):
         self.type = type
         self.value = value
         

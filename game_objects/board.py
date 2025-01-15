@@ -36,6 +36,9 @@ class Board(list):
     def clear(self) -> None:
         '''Remove all cards from the board.'''
         self[:] = [None] * 5
+        
+    def __str__(self) -> str:
+        return f'[{', '.join(map(str, self))}]'
     
     def color_count(self) -> Counter:
         '''Return the number of cards in the hand with the given color.'''
@@ -89,7 +92,7 @@ class Board(list):
         if 1 in cards:
             cards.add(14)
             
-        cards == sorted(cards, reverse=True)
+        cards = sorted(cards, reverse=True)
 
         accum = 1
         for i in range(len(cards) - 1):
