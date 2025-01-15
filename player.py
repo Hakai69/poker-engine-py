@@ -17,6 +17,9 @@ class Player(ABC):
         op_hand: HoleCards | None = None  
     ) -> Action:
         '''Return the player's move given the current board.'''
+        
+    def __str__(self) -> str:
+        return self.name
 
 class ConsolePlayer(Player):
     _string_to_action_type = {
