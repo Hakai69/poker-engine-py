@@ -64,7 +64,7 @@ class ConsolePlayer(Player):
         board: Board,
         status: GameStatus,
         *,
-        op_hand: HoleCards | None = None  
+        op_holecards: HoleCards | None = None  
     ) -> Action:
         
         print(f'{self.name}\'s turn')
