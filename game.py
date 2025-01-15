@@ -1,4 +1,4 @@
-from .game_objects import (
+from game_objects import (
     Deck,
     HoleCards,
     Board,

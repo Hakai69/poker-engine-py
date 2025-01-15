@@ -1,26 +1,24 @@
 from abc import ABC, abstractmethod
 from typing import Collection, Literal
 
-from .game_objects import Hand, Board, GameStatus, Action, ActionType
+from game_objects import HoleCards, Board, GameStatus, Action, ActionType
 
-class Player(ABC):
-    '''A player in the game.'''
+class Player(ABC):   
     def __init__(self, name: str):
         self.name = name
     
     @abstractmethod
     def get_action(
         self,
-        hand: Hand,
+        hole_cards: HoleCards, 
         board: Board,
         status: GameStatus,
         *,
-        op_hand: Hand | None = None
+        op_hand: HoleCards | None = None  
     ) -> Action:
         '''Return the player's move given the current board.'''
-        
+
 class ConsolePlayer(Player):
-    '''A player that plays through the terminal.'''
     _string_to_action_type = {
         'fold' : ActionType.FOLD,
         'check': ActionType.CHECK,
@@ -29,16 +27,16 @@ class ConsolePlayer(Player):
         'muck' : ActionType.MUCK,
         'show' : ActionType.SHOW
     }
+    
     @staticmethod
     def action_type_from_string(
         raw_action: Literal['fold', 'check', 'call', 'raise', 'muck', 'show']
     ) -> ActionType | None:
-        
         return ConsolePlayer._string_to_action_type.get(raw_action, None)
     
     @staticmethod
     def ask_action_type(valid_actions: Collection[ActionType]) -> ActionType:
-        query = f'Enter your move ({'/'.join(map(str, valid_actions))}): '
+        query = f'Enter your move ({"/".join(map(str, valid_actions))}): '
         raw_action = input(query)
         action_type = ConsolePlayer.action_type_from_string(raw_action)
         while not action_type or action_type not in valid_actions:
@@ -62,15 +60,15 @@ class ConsolePlayer(Player):
         
     def get_action(
         self,
-        hand: Hand,
+        hole_cards: HoleCards, 
         board: Board,
         status: GameStatus,
         *,
-        op_hand: Hand | None = None
+        op_hand: HoleCards | None = None  
     ) -> Action:
         
         print(f'{self.name}\'s turn')
-        print(f'Your hand: {hand}')
+        print(f'Your hole cards: {hole_cards}') 
         print(f'The board: {board}')
         print(f'The status: {status}')
         
@@ -79,3 +77,4 @@ class ConsolePlayer(Player):
         value = self.ask_action_value(action_type)
         
         return Action(action_type, value)
+
