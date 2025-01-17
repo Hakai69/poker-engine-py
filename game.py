@@ -20,6 +20,8 @@ class Game:
         blind: int = 10
     ):
         assert player1.name != player2.name
+        if blind % 2:
+            raise ValueError('Blind must be an even number.')
         self.players = [player1, player2]
         self.hole_cards = [None, None]
         self.board = Board()
@@ -107,12 +109,12 @@ class Game:
         next_phase = phase.next_phase()
         
         action1 = self.players[status.current_player] \
-            .get_action(self.hole_cards[status.current_player], self.board, status)
+            .get_action(self.hole_cards[status.current_player], self.board.copy(), status.copy())
         self.process_action(action1, verbose=verbose)
         status.current_player = 1 - status.current_player
         while status.game_phase == phase:
             action = self.players[status.current_player] \
-                .get_action(self.hole_cards[status.current_player], self.board, status)
+                .get_action(self.hole_cards[status.current_player], self.board.copy(), status.copy())
             self.process_action(action, verbose=verbose)
             status.current_player = 1 - status.current_player
             if status.bets[0] == status.bets[1]:
@@ -122,6 +124,10 @@ class Game:
 
     def play_round(self, verbose: bool = False):
         status = self.status
+        status.initial_player = 1 - status.initial_player
+        status.current_player = status.initial_player
+        status.game_phase = GamePhase.PRE_FLOP
+        status.last_aggresive_player = 1 - status.initial_player
         if status.players_money[0] < self.blind:
             raise ValueError(f'{self.players[0]} is out of money!')
         if status.players_money[1] < self.blind:
@@ -131,8 +137,10 @@ class Game:
             raise ValueError('Something went wrong, players have negative money.')
         
         initial_money = (status.players_money[0], status.players_money[1])
-        status.players_money[status.initial_player] -= self.blind
-        status.bets[status.initial_player] = self.blind
+        status.players_money[status.initial_player] -= self.blind // 2
+        status.players_money[1 - status.initial_player] -= self.blind
+        status.bets[status.initial_player] = self.blind // 2
+        status.bets[1 - status.initial_player] = self.blind
         all_in = status.players_money[status.initial_player] == 0
         
         if verbose: print('Playing a new round!')
@@ -149,9 +157,9 @@ class Game:
             self.play_phase(verbose=verbose)
         
         if status.game_phase == GamePhase.FINISHED:
+            self.summary(initial_money)
             if verbose:
                 print('Round finished!')
-                self.summary(initial_money)
             return
         
         if status.players_money[0] == 0 or status.players_money[1] == 0:
@@ -165,9 +173,9 @@ class Game:
             self.play_phase(verbose=verbose)
             
         if status.game_phase == GamePhase.FINISHED:
+            self.summary(initial_money)
             if verbose:
                 print('Round finished!')
-                self.summary(initial_money)
             return
         
         if status.players_money[0] == 0 or status.players_money[1] == 0:
@@ -181,9 +189,9 @@ class Game:
             self.play_phase(verbose=verbose)
         
         if status.game_phase == GamePhase.FINISHED:
+            self.summary(initial_money)
             if verbose:
                 print('Round finished!')
-                self.summary(initial_money)
             return
         
         if status.players_money[0] == 0 or status.players_money[1] == 0:
@@ -197,49 +205,51 @@ class Game:
             self.play_phase(verbose=verbose)
         
         if status.game_phase == GamePhase.FINISHED:
+            self.summary(initial_money)
             if verbose:
                 print('Round finished!')
-                self.summary(initial_money)
             return
         
         # SHOWDOWN
         if verbose: print('Showdown!')
         ag_player = status.last_aggresive_player
         action = self.players[ag_player] \
-            .get_action(self.hole_cards[ag_player], self.board, status)
+            .get_action(self.hole_cards[ag_player], self.board.copy(), status.copy())
         self.process_action(action, verbose=verbose)
         
         if status.game_phase == GamePhase.FINISHED:
+            self.summary(initial_money)
             if verbose:
                 print('Round finished!')
-                self.summary(initial_money)
             return
         
         other = 1 - ag_player
         action = self.players[other].get_action(
             self.hole_cards[other],
-            self.board,
-            status,
+            self.board.copy(),
+            status.copy(),
             op_holecards=self.hole_cards[ag_player]
         )
         self.process_action(action, verbose=verbose)
         
         if status.game_phase == GamePhase.FINISHED:
+            self.summary(initial_money)
             if verbose:
                 print('Round finished!')
-                self.summary(initial_money)
             return
         
-        winner, index = self.board.evaluate(*self.hole_cards)
-        if not winner:
+        is_win, index = self.board.evaluate(*self.hole_cards)
+        if not is_win:
             status.players_money[0] += status.bets[0]
             status.players_money[1] += status.bets[1]
             return
         
         status.players_money[index] += sum(status.bets)
+        
+        # Change initial playe
+        self.summary(initial_money)
         if verbose:
             print(f'{self.players[index]} won the round!')
-            self.summary(initial_money)
             
             
 if __name__ == '__main__':
@@ -248,3 +258,4 @@ if __name__ == '__main__':
     player2 = ConsolePlayer('Player 2')
     game = Game(player1, player2)
     game.play_round(verbose=True)
+    game.play_round()

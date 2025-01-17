@@ -2,6 +2,8 @@ from enum import Enum, auto
 
 from .action import ActionType
 
+from copy import deepcopy
+
 class GamePhase(Enum):
     PRE_FLOP = auto()
     FLOP = auto()
@@ -35,8 +37,8 @@ class GameStatus:
         self.players_money = [player1_money, player2_money]
         self.game_phase = GamePhase.PRE_FLOP
         self.bets = [0, 0]
-        self.initial_player = 0
-        self.current_player = 1
+        self.initial_player = 1
+        self.current_player = 0
         self.last_aggresive_player = 0
         self.blind = blind
         
@@ -64,3 +66,6 @@ class GameStatus:
             f'Bets: {self.bets}, '
             f'Players money: {self.players_money}'
         )
+        
+    def copy(self):
+        return deepcopy(self)

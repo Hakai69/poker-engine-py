@@ -1,6 +1,5 @@
 from collections import Counter
-from typing import Iterable
-import numpy as np
+from copy import deepcopy
 
 from .hole_cards import HoleCards
 from .card import Card
@@ -11,6 +10,10 @@ class Board(list):
     '''The board in Poker, also known as the community cards.'''
     def __init__(self):
         super().__init__([None] * 5)
+        
+    def copy(self):
+        '''Return a copy of the board.'''
+        return deepcopy(self)
         
     def flop(self, c1: Card, c2: Card, c3: Card) -> None:
         '''Replace the current board with the flop.'''
