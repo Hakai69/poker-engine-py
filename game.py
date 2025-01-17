@@ -258,4 +258,3 @@ if __name__ == '__main__':
     player2 = ConsolePlayer('Player 2')
     game = Game(player1, player2)
     game.play_round(verbose=True)
-    game.play_round()
