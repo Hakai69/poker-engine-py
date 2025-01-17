@@ -35,9 +35,9 @@ class BasicDecisionMaker(Player):
             if op_holecards is None:
                 return Action(ActionType.SHOW)
             is_win, idx = board.evaluate(player_hand, op_holecards)
-            if is_win and idx == 0:
-                return Action(ActionType.SHOW)
-            return Action(ActionType.MUCK)
+            if is_win and idx == 1:
+                return Action(ActionType.MUCK)
+            return Action(ActionType.SHOW)
         
         valid_actions = status.get_valid_actions()
         
