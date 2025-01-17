@@ -281,13 +281,11 @@ class Board(list):
             
             # Remove the three of a kind from the high cards
             # Otherwise remove the worst card
-            highest0.remove(trip_number0)
-            if len(highest0) == 3:
-                highest0.pop()
+            try: highests0.remove(trip_number0)
+            except: highests0.pop()
                 
-            highest1.remove(trip_number1)
-            if len(highest1) == 3:
-                highest1.pop()
+            try: highests1.remove(trip_number1)
+            except: highests1.pop()
             
             # Compare both lists
             return highests0 != highests1, int(highests0 < highests1)
@@ -343,14 +341,11 @@ class Board(list):
             highests0 = sorted(nums0.keys(), reverse=True)[:4]
             highests1 = sorted(nums1.keys(), reverse=True)[:4]
             
-            highests0.remove(pair_number0)
-            if len(highests0) == 4:
-                highests0.pop()
+            try: highests0.remove(pair_number0)
+            except: highests0.pop()
                 
-            highests1.remove(pair_number1)
-            if len(highests1) == 4:
-                highests1.pop()
-                
+            try: highests1.remove(pair_number1)
+            except: highests1.pop()
             
             return highests0 != highests1, int(highests0 < highests1)
         
