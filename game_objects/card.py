@@ -17,7 +17,7 @@ class Card:
         self.color = color
         
     def __eq__(self, other: Self):
-        return self.number == other.number and self.color == other.color
+        return isinstance(other, Card) and self.number == other.number and self.color == other.color
     
     def __hash__(self):
         return hash((self.number, self.color))
