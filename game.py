@@ -67,7 +67,7 @@ class Game:
             total_bet = action.value + call_bet
             total_bet = min(total_bet, status.players_money[player])
             # Cannot raise over all-in in two player game
-            total_bet = min(total_bet, status.players_money[other])
+            total_bet = min(total_bet, status.players_money[other] + status.bets[other])
             if total_bet - call_bet == 0:
                 return self.process_action(Action(ActionType.CALL), verbose=verbose)
             status.players_money[player] -= total_bet
@@ -148,13 +148,15 @@ class Game:
         for i in range(2):
             self.hole_cards[i] = HoleCards([self.deck.deal(), self.deck.deal()])
         if verbose:
-            print(f'Player 1 hole cards: {self.hole_cards[0]}')
-            print(f'Player 2 hole cards: {self.hole_cards[1]}')
+            print(f'{self.players[0]} hole cards: {self.hole_cards[0]}')
+            print(f'{self.players[1]} hole cards: {self.hole_cards[1]}')
         
         # PREFLOP
         if verbose: print('Pre-flop betting round!')
         if not all_in:
             self.play_phase(verbose=verbose)
+        else:
+            status.game_phase = GamePhase.SHOWDOWN
         
         if status.game_phase == GamePhase.FINISHED:
             self.summary(initial_money)
@@ -171,6 +173,8 @@ class Game:
         if verbose: print(f'Board: {self.board}')
         if not all_in:
             self.play_phase(verbose=verbose)
+        else:
+            status.game_phase = GamePhase.SHOWDOWN
             
         if status.game_phase == GamePhase.FINISHED:
             self.summary(initial_money)
@@ -187,6 +191,8 @@ class Game:
         if verbose: print(f'Board: {self.board}')
         if not all_in:
             self.play_phase(verbose=verbose)
+        else:
+            status.game_phase = GamePhase.SHOWDOWN
         
         if status.game_phase == GamePhase.FINISHED:
             self.summary(initial_money)
@@ -203,6 +209,8 @@ class Game:
         if verbose: print(f'Board: {self.board}')
         if not all_in:
             self.play_phase(verbose=verbose)
+        else:
+            status.game_phase = GamePhase.SHOWDOWN
         
         if status.game_phase == GamePhase.FINISHED:
             self.summary(initial_money)
@@ -213,6 +221,7 @@ class Game:
         # SHOWDOWN
         if verbose: print('Showdown!')
         ag_player = status.last_aggresive_player
+        status.current_player = ag_player
         action = self.players[ag_player] \
             .get_action(self.hole_cards[ag_player], self.board.copy(), status.copy())
         self.process_action(action, verbose=verbose)
@@ -224,6 +233,7 @@ class Game:
             return
         
         other = 1 - ag_player
+        status.current_player = other
         action = self.players[other].get_action(
             self.hole_cards[other],
             self.board.copy(),
@@ -238,18 +248,17 @@ class Game:
                 print('Round finished!')
             return
         
+        print(f'{self.players[other]} showed {self.hole_cards[other]}!') 
         is_win, index = self.board.evaluate(*self.hole_cards)
         if not is_win:
             status.players_money[0] += status.bets[0]
             status.players_money[1] += status.bets[1]
-            return
+        else:
+            status.players_money[index] += sum(status.bets)
         
-        status.players_money[index] += sum(status.bets)
-        
-        # Change initial playe
+        # Change initial player
         self.summary(initial_money)
-        if verbose:
-            print(f'{self.players[index]} won the round!')
+        print('Round finished!')
             
             
 if __name__ == '__main__':

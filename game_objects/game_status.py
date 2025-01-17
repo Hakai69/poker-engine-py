@@ -54,7 +54,7 @@ class GameStatus:
         else:
             valid_actions.append(ActionType.CALL)
         
-        if self.players_money[player] > self.bets[other]:
+        if self.players_money[player] + self.bets[player] > self.bets[other]:
             valid_actions.append(ActionType.RAISE)
             
         return valid_actions
