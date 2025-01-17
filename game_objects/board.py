@@ -5,6 +5,7 @@ import numpy as np
 from .hole_cards import HoleCards
 from .card import Card
 from .color import Color
+from .game_status import GamePhase
 
 class Board(list):
     '''The board in Poker, also known as the community cards.'''
@@ -36,6 +37,21 @@ class Board(list):
     def clear(self) -> None:
         '''Remove all cards from the board.'''
         self[:] = [None] * 5
+    
+    @property
+    def status(self) -> GamePhase:
+        '''Return the status of the board.'''
+        n_cards = 5 - self.count(None)
+        if n_cards == 0:
+            return GamePhase.PRE_FLOP
+        if n_cards == 3:
+            return GamePhase.FLOP
+        if n_cards == 4:
+            return GamePhase.TURN
+        return GamePhase.RIVER
+    
+    def __len__(self) -> int:
+        return 5 - self.count(None)
         
     def __str__(self) -> str:
         return f'[{', '.join(map(str, self))}]'
