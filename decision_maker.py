@@ -4,7 +4,7 @@ from ia.bet_curve_optimizer import BetCurveOptimizer
 from ia.neural_network import NeuralNetwork
 from player import Player
 
-
+raise NotImplementedError('Not implemented yet')
 class DecisionMaker(Player):
     def __init__(self, name: str, rl_model):
         super().__init__(name)
