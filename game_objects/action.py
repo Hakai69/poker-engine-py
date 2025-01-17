@@ -17,7 +17,7 @@ class Action:
 
     def __init__(self, type: ActionType, value: int | None = None):
         self.type = type
-        self.value = value
+        self.value = value if not value else max(value, 0)
         
     def __eq__(self, other: Self):
         return self.type == other.type and self.value == other.value
