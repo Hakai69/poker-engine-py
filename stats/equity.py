@@ -53,8 +53,6 @@ def calculate_equity(
     '''
 
     player_cards = list(hole_cards)
-    if opponent_range is None:
-        opponent_range = []
         
     game_phase = board.status
     board_f = generate_board_func[game_phase]
@@ -68,7 +66,7 @@ def calculate_equity(
         simmulation_board = board_f(board, simulation_deck)
         
         # Evaluate position
-        is_win, winner_idx = simmulation_board.evaluate(player_cards, opponent_hand)
+        is_win, winner_idx = simmulation_board.evaluate(hole_cards, opponent_hand)
         if is_win:
             equity_results.append(winner_idx == 0)
             continue
