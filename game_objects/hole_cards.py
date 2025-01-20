@@ -1,4 +1,5 @@
 from typing import Collection
+from collections import Counter
 
 from .card import Card
 from .color import Color
@@ -17,8 +18,8 @@ class HoleCards(frozenset):
     def __repr__(self) -> str:
         return f'HoleCards({str(list(self))})'
     
-    def color_count(self, color: Color) -> int:
+    def color_count(self) -> Counter[Color]:
         '''Return the number of cards in the hand with the given color.'''
-        return sum(card.color == color for card in self)
+        return Counter(card.color for card in self)
     
     

@@ -59,7 +59,7 @@ class Board(list):
     def __str__(self) -> str:
         return f'[{', '.join(map(str, self))}]'
     
-    def color_count(self) -> Counter:
+    def color_count(self) -> Counter[Color]:
         '''Return the number of cards in the hand with the given color.'''
         return Counter(card.color for card in self)
     
